@@ -1,6 +1,4 @@
 require 'json'
-require 'net/http'
-require 'openssl'
 require 'digest/md5'
 require_relative 'constants'
 require_relative 'http_client'
@@ -60,9 +58,9 @@ module IM
       url = Constants::EASEMOB_BASE_URL + '/messages'
       params = {
         target_type: to_type,
-        target: to_list
-        msg: msg
-        from: from
+        target: to_list,
+        msg: msg,
+        from: from,
         ext: ext
       }
       uri, req = @http_client.post_request(url, params)
@@ -79,11 +77,11 @@ module IM
 end
 
 # Test method
-easemob = IM::Easemob.new('cronnorc@gmail.com')
+easemob = IM::Easemob.new
 # Login and authorize
 easemob.authorize
 # Create user
-# easemob.create('cronnorc@gmail.com')
+easemob.create('cronnorc@gmail.com')
 # Delete user
 # easemob.delete('cronnorc@gmail.com')
 
