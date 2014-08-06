@@ -15,6 +15,7 @@ class HttpClient
     [uri, req]
   end
 
+  # 合成Delete请求参数
   def del_request(url, header=nil)
     uri = URI.parse(url)
     req = Net::HTTP::Delete.new(uri)

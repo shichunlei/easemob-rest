@@ -8,10 +8,9 @@ require_relative 'http_client'
 module IM
 
   class Easemob
-    attr_reader :access_token, :email
+    attr_reader :access_token
 
-    def initialize(email)
-      @email = email
+    def initialize
       @http_client = HttpClient.new
     end
 
@@ -34,6 +33,7 @@ module IM
       usr_name = gen_esmb_usr(email)
       authorization = "Bearer " + @access_token
       header = { "Authorization" => authorization }
+
       url = Constants::EASEMOB_BASE_URL + '/users'
       params = {
         username: usr_name,
@@ -56,9 +56,18 @@ module IM
     end
 
     # 管理员发送消息给用户或者群组
-    def send_message(usr_name, target_name)
-      
-
+    def send_message(from, msg, to_type, to_list, ext)
+      url = Constants::EASEMOB_BASE_URL + '/messages'
+      params = {
+        target_type: to_type,
+        target: to_list
+        msg: msg
+        from: from
+        ext: ext
+      }
+      uri, req = @http_client.post_request(url, params)
+      res = @http_client.submit(uri, req)
+      puts JSON.parse(res.body) if res.is_a?(Net::HTTPSuccess)
     end
 
     private
