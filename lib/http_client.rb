@@ -3,6 +3,18 @@ require 'openssl'
 
 class HttpClient
 
+  # 发送Get请求
+  def get_request(url, params, header=nil)
+    uri = URI(url)
+    uri.query = URI.encode_www_form(params)
+    req = Net::HTTP::Get.new(uri)
+    if header
+      req.initialize_http_header(header)
+    end
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.request req
+  end
+
   # 合成Post请求参数
   def post_request(url, params, header=nil)
     uri = URI.parse(url)
@@ -32,7 +44,7 @@ class HttpClient
 
     if uri.scheme == 'https'
       http.use_ssl     = true
-      verify_mode      = 'VERIFY_NONE'
+      verify_mode      = OpenSSL::SSL::VERIFY_NONE # OpenSSL::SSL::VERIFY_PEER
       http.verify_mode = OpenSSL::SSL.const_get(verify_mode)
     end
 
@@ -40,3 +52,10 @@ class HttpClient
   end
 
 end
+
+# Test method
+# http_client = HttpClient.new
+# url = "http://api.c-launcher.com/client/apk/get.do?"
+# params = { :apkType => 'CLauncher', :version => 0, :channel => 10000 }
+# res = http_client.get_request(url, params)
+# puts res.body if res.is_a?(Net::HTTPSuccess)
