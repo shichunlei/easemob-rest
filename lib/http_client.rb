@@ -52,10 +52,3 @@ class HttpClient
   end
 
 end
-
-# Test method
-# http_client = HttpClient.new
-# url = "http://api.c-launcher.com/client/apk/get.do?"
-# params = { :apkType => 'CLauncher', :version => 0, :channel => 10000 }
-# res = http_client.get_request(url, params)
-# puts res.body if res.is_a?(Net::HTTPSuccess)

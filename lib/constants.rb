@@ -6,8 +6,6 @@ module IM
     # 公司名和应用名
     ORG_NAME = 'cty'
     APP_NAME = 'unicorn'
-    # 登录环信管理后台 https://console.easemob.com/index.html
-    # 用户名：CTY 密码：liucty
     
     # 应用分配的CLIENT_ID和CLIENT_SECRET
     CLIENT_ID = 'YXA6ralBwBw2EeSyW82prkvF7w'
