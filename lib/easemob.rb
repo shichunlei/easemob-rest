@@ -12,7 +12,7 @@ module IM
       @http_client = HttpClient.new
     end
 
-    # 登录并授权
+    # 获得TOKEN
     def authorize
       url = Constants::EASEMOB_BASE_URL + '/token'
       params = {
@@ -23,11 +23,13 @@ module IM
       uri, req = @http_client.post_request(url, params)
       res = @http_client.submit(uri, req)
       @access_token = JSON.parse(res.body)['access_token'] if res.is_a?(Net::HTTPSuccess)
-      # puts @access_token
+      puts @access_token
     end
 
+    # //////////////////////////////////////用户体系REST接口////////////////////////////////////////////////////
+
     # 授权注册模式-创建帐号
-    def create(email, passwd)
+    def create(email, passwd, nickname)
       usr_name = gen_usr_name(email)
       authorization = "Bearer " + @access_token
       header = { "Authorization" => authorization }
@@ -35,19 +37,66 @@ module IM
       url = Constants::EASEMOB_BASE_URL + '/users'
       params = {
         username: usr_name,
-        password: passwd
+        password: passwd,
+        nickname: nickname
       }
       uri, req = @http_client.post_request(url, params, header)
       res = @http_client.submit(uri, req)
       JSON.parse(res.body) if res.is_a?(Net::HTTPSuccess)
     end
 
-    # 删除已有账号
+    # 开放注册模式-创建帐号
+    def create_open(email, passwd, nickname)
+      usr_name = gen_usr_name(email)
+
+      url = Constants::EASEMOB_BASE_URL + '/users'
+      params = {
+        username: usr_name,
+        password: passwd,
+        nickname: nickname
+      }
+      uri, req = @http_client.post_request(url, params, nil)
+      res = @http_client.submit(uri, req)
+      JSON.parse(res.body) if res.is_a?(Net::HTTPSuccess)
+    end
+
+    # 删除已有账号（单个）
     def delete(email)
       usr_name = gen_usr_name(email)
       authorization = "Bearer " + @access_token
       header = { "Authorization" => authorization }
       url = Constants::EASEMOB_BASE_URL + '/users/' + usr_name
+      uri, req = @http_client.del_request(url, header)
+      res = @http_client.submit(uri, req)
+      JSON.parse(res.body) if res.is_a?(Net::HTTPSuccess)
+    end
+
+    # 删除已有账号（批量）
+    def delete(limit)
+      authorization = "Bearer " + @access_token
+      header = { "Authorization" => authorization }
+      url = Constants::EASEMOB_BASE_URL + '/users/?limit=' + limit
+      uri, req = @http_client.del_request(url, header)
+      res = @http_client.submit(uri, req)
+      JSON.parse(res.body) if res.is_a?(Net::HTTPSuccess)
+    end
+
+    # 删除已有账号（单个）
+    def query(email)
+      usr_name = gen_usr_name(email)
+      authorization = "Bearer " + @access_token
+      header = { "Authorization" => authorization }
+      url = Constants::EASEMOB_BASE_URL + '/users/' + usr_name
+      uri, req = @http_client.del_request(url, header)
+      res = @http_client.submit(uri, req)
+      JSON.parse(res.body) if res.is_a?(Net::HTTPSuccess)
+    end
+
+    # 删除已有账号（批量）
+    def query(limit)
+      authorization = "Bearer " + @access_token
+      header = { "Authorization" => authorization }
+      url = Constants::EASEMOB_BASE_URL + '/users/?limit=' + limit
       uri, req = @http_client.del_request(url, header)
       res = @http_client.submit(uri, req)
       JSON.parse(res.body) if res.is_a?(Net::HTTPSuccess)
@@ -86,7 +135,7 @@ module IM
       # 根据邮箱生成环信账号
       def gen_usr_name(email)
         Digest::MD5.hexdigest(email)
-      end    
+      end
   end
 end
 
